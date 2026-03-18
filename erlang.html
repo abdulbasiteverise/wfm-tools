@@ -1,90 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Erlang C Calculator</title>
-<style>
-body {
-  font-family: Arial;
-  background:#0f172a;
-  color:white;
-  padding:20px;
-}
-
-input {
-  margin:5px 0;
-  padding:8px;
-  width:100%;
-}
-
-button {
-  padding:10px;
-  background:#38bdf8;
-  border:none;
-  margin-top:10px;
-}
-
-.box {
-  max-width:500px;
-  margin:auto;
-}
-</style>
+<title>Erlang C Advanced</title>
 </head>
 
-<body>
+<body style="background:#0f172a;color:white;padding:20px;font-family:sans-serif;">
 
-<div class="box">
-<h2>📞 Erlang C Calculator</h2>
+<h2>📞 Erlang C (Real SLA)</h2>
 
-<label>Calls (per hour)</label>
-<input id="calls">
+<input id="calls" placeholder="Calls per hour"><br>
+<input id="aht" placeholder="AHT seconds"><br>
+<input id="agents" placeholder="Agents"><br>
+<input id="target" placeholder="Target answer time (sec)"><br>
 
-<label>AHT (seconds)</label>
-<input id="aht">
+<button onclick="calc()">Calculate SLA</button>
 
-<label>SLA Target (%)</label>
-<input id="sla">
-
-<label>Target Time (sec)</label>
-<input id="tgt">
-
-<button onclick="calc()">Calculate Agents</button>
-
-<h3 id="result"></h3>
-</div>
+<h3 id="out"></h3>
 
 <script>
-function erlangC(traffic, agents){
-  let sum=0;
-  for(let i=0;i<agents;i++){
-    sum+=Math.pow(traffic,i)/fact(i);
-  }
-  let last=(Math.pow(traffic,agents)/fact(agents))*(agents/(agents-traffic));
-  return last/(sum+last);
+function fact(n){
+ let f=1;
+ for(let i=1;i<=n;i++) f*=i;
+ return f;
 }
 
-function fact(n){
-  let f=1;
-  for(let i=1;i<=n;i++) f*=i;
-  return f;
+function erlangC(A,N){
+ let sum=0;
+ for(let i=0;i<N;i++){
+   sum+=Math.pow(A,i)/fact(i);
+ }
+
+ let last=(Math.pow(A,N)/fact(N))*(N/(N-A));
+ return last/(sum+last);
 }
 
 function calc(){
-  let calls=document.getElementById("calls").value;
-  let aht=document.getElementById("aht").value;
+ let calls=+calls.value;
+ let aht=+aht.value;
+ let agents=+agents.value;
+ let t=+target.value;
 
-  let traffic=(calls*aht)/3600;
+ let A=(calls*aht)/3600;
 
-  let agents=Math.ceil(traffic);
+ let ec=erlangC(A,agents);
 
-  while(true){
-    let ec=erlangC(traffic,agents);
-    let sl=1 - ec*Math.exp(-(agents-traffic)*(1));
-    if(sl>=0.8) break;
-    agents++;
-  }
+ let sl=1 - ec*Math.exp(-(agents-A)*(t/aht));
 
-  document.getElementById("result").innerHTML=
-    "Required Agents: "+agents+"<br>Traffic: "+traffic.toFixed(2);
+ document.getElementById("out").innerHTML=
+   "Traffic: "+A.toFixed(2)+"<br>SLA: "+(sl*100).toFixed(2)+"%";
 }
 </script>
 
