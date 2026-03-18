@@ -1,2 +1,2 @@
 # wfm-tools
-WFM tools and dashboards with AI insights
+WFM tools and dashboards with AI insights.
