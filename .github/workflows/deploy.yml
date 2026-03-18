@@ -1,4 +1,4 @@
-name: 🚀 Auto Deploy + Codex
+name: 🚀 Auto Deploy
 
 on:
   push:
@@ -16,15 +16,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Run Codex (AI Improve)
-        uses: openai/codex-action@v1
-        with:
-          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
-          prompt: |
-            Improve UI, fix bugs, optimize WFM calculations,
-            enhance UX, ensure responsiveness, clean code structure.
-          sandbox: workspace-write
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
