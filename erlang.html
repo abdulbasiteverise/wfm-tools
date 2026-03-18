@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Erlang C Calculator</title>
+<style>
+body {
+  font-family: Arial;
+  background:#0f172a;
+  color:white;
+  padding:20px;
+}
+
+input {
+  margin:5px 0;
+  padding:8px;
+  width:100%;
+}
+
+button {
+  padding:10px;
+  background:#38bdf8;
+  border:none;
+  margin-top:10px;
+}
+
+.box {
+  max-width:500px;
+  margin:auto;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h2>📞 Erlang C Calculator</h2>
+
+<label>Calls (per hour)</label>
+<input id="calls">
+
+<label>AHT (seconds)</label>
+<input id="aht">
+
+<label>SLA Target (%)</label>
+<input id="sla">
+
+<label>Target Time (sec)</label>
+<input id="tgt">
+
+<button onclick="calc()">Calculate Agents</button>
+
+<h3 id="result"></h3>
+</div>
+
+<script>
+function erlangC(traffic, agents){
+  let sum=0;
+  for(let i=0;i<agents;i++){
+    sum+=Math.pow(traffic,i)/fact(i);
+  }
+  let last=(Math.pow(traffic,agents)/fact(agents))*(agents/(agents-traffic));
+  return last/(sum+last);
+}
+
+function fact(n){
+  let f=1;
+  for(let i=1;i<=n;i++) f*=i;
+  return f;
+}
+
+function calc(){
+  let calls=document.getElementById("calls").value;
+  let aht=document.getElementById("aht").value;
+
+  let traffic=(calls*aht)/3600;
+
+  let agents=Math.ceil(traffic);
+
+  while(true){
+    let ec=erlangC(traffic,agents);
+    let sl=1 - ec*Math.exp(-(agents-traffic)*(1));
+    if(sl>=0.8) break;
+    agents++;
+  }
+
+  document.getElementById("result").innerHTML=
+    "Required Agents: "+agents+"<br>Traffic: "+traffic.toFixed(2);
+}
+</script>
+
+</body>
+</html>
