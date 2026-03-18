@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Capacity Planner</title>
+</head>
+<body style="font-family: Arial; background:#0f172a; color:white; padding:20px;">
+
+<h2>📊 Capacity Planner</h2>
+
+<label>Volume</label><br>
+<input id="vol"><br><br>
+
+<label>AHT (sec)</label><br>
+<input id="aht"><br><br>
+
+<label>Shrinkage %</label><br>
+<input id="shr"><br><br>
+
+<label>Occupancy %</label><br>
+<input id="occ"><br><br>
+
+<button onclick="calc()">Calculate</button>
+
+<h3 id="out"></h3>
+
+<script>
+function calc(){
+ let v=vol.value, a=aht.value, s=shr.value, o=occ.value;
+
+ let workload=(v*a)/3600;
+ let fte=workload/((1-s/100)*(o/100));
+
+ out.innerHTML="Required FTE: "+Math.ceil(fte);
+}
+</script>
+
+</body>
+</html>
