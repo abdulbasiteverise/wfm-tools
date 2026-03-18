@@ -1,36 +1,152 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Capacity Planner</title>
+<title>Capacity Planner</title>
+
+<style>
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background:#0f172a;
+  color:white;
+  padding:20px;
+}
+
+.container {
+  max-width:900px;
+  margin:auto;
+}
+
+input {
+  padding:10px;
+  width:100%;
+  margin:5px 0;
+  border-radius:6px;
+  border:none;
+  background:#1e293b;
+  color:white;
+}
+
+button {
+  padding:12px;
+  width:100%;
+  background:#38bdf8;
+  border:none;
+  margin-top:10px;
+  border-radius:8px;
+  font-weight:bold;
+}
+
+.result {
+  margin-top:20px;
+  background:#020617;
+  padding:15px;
+  border-radius:10px;
+}
+
+.ai {
+  margin-top:15px;
+  background:#1e293b;
+  padding:15px;
+  border-left:4px solid #22c55e;
+}
+
+table {
+  width:100%;
+  margin-top:20px;
+  border-collapse:collapse;
+}
+
+td, th {
+  border:1px solid #334155;
+  padding:8px;
+  text-align:center;
+}
+</style>
+
 </head>
-<body style="font-family: Arial; background:#0f172a; color:white; padding:20px;">
 
-<h2>📊 Capacity Planner</h2>
+<body>
 
-<label>Volume</label><br>
-<input id="vol"><br><br>
+<div class="container">
 
-<label>AHT (sec)</label><br>
-<input id="aht"><br><br>
+<h2>📊 Capacity Planner + AI Insights</h2>
 
-<label>Shrinkage %</label><br>
-<input id="shr"><br><br>
+<label>Hourly Volume</label>
+<input id="vol">
 
-<label>Occupancy %</label><br>
-<input id="occ"><br><br>
+<label>AHT (seconds)</label>
+<input id="aht">
+
+<label>Shrinkage %</label>
+<input id="shr">
+
+<label>Occupancy %</label>
+<input id="occ">
 
 <button onclick="calc()">Calculate</button>
 
-<h3 id="out"></h3>
+<div class="result" id="output"></div>
+<div class="ai" id="ai"></div>
+
+<div id="table"></div>
+
+</div>
 
 <script>
 function calc(){
- let v=vol.value, a=aht.value, s=shr.value, o=occ.value;
+
+ let v=+vol.value;
+ let a=+aht.value;
+ let s=+shr.value;
+ let o=+occ.value;
 
  let workload=(v*a)/3600;
  let fte=workload/((1-s/100)*(o/100));
 
- out.innerHTML="Required FTE: "+Math.ceil(fte);
+ let finalFTE=Math.ceil(fte);
+
+ document.getElementById("output").innerHTML=
+   "Workload Hours: "+workload.toFixed(2)+"<br>Required FTE: "+finalFTE;
+
+ // 🤖 AI INSIGHTS
+ let insight="";
+
+ if(o>85){
+   insight+="⚠️ High occupancy risk → burnout & SLA failure<br>";
+ }
+
+ if(s>35){
+   insight+="⚠️ Shrinkage too high → staffing gap risk<br>";
+ }
+
+ if(finalFTE < workload){
+   insight+="⚠️ Understaffing detected<br>";
+ }
+
+ if(insight===""){
+   insight="✅ Plan looks balanced and stable";
+ }
+
+ document.getElementById("ai").innerHTML="<b>AI Insights:</b><br>"+insight;
+
+ // 📊 INTERVAL TABLE
+ let table="<table><tr><th>Hour</th><th>Volume</th><th>FTE</th></tr>";
+
+ for(let i=1;i<=8;i++){
+   let hourlyVol=Math.round(v*(0.8+Math.random()*0.4));
+   let wl=(hourlyVol*a)/3600;
+   let hf=Math.ceil(wl/((1-s/100)*(o/100)));
+
+   table+=`<tr>
+     <td>${i}</td>
+     <td>${hourlyVol}</td>
+     <td>${hf}</td>
+   </tr>`;
+ }
+
+ table+="</table>";
+
+ document.getElementById("table").innerHTML=table;
 }
 </script>
 
